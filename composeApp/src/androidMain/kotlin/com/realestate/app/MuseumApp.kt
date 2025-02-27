@@ -1,9 +1,9 @@
-package com.jetbrains.kmpapp
+package com.realestate.app
 
 import android.app.Application
-import com.jetbrains.kmpapp.di.initKoin
-import com.jetbrains.kmpapp.screens.DetailViewModel
-import com.jetbrains.kmpapp.screens.ListViewModel
+import com.realestate.app.di.initKoin
+import com.realestate.app.screens.DetailViewModel
+import com.realestate.app.screens.ListViewModel
 import org.koin.dsl.module
 
 class MuseumApp : Application() {
