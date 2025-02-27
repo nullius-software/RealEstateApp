@@ -10,9 +10,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.realestate.app.screens.ListScreen
 import com.realestate.app.screens.DetailScreen
+import com.realestate.app.screens.LoginScreen
+import com.realestate.app.screens.ListScreen
 import kotlinx.serialization.Serializable
+
+@Serializable
+object LoginDestination
 
 @Serializable
 object ListDestination
@@ -27,7 +31,12 @@ fun App() {
     ) {
         Surface {
             val navController = rememberNavController()
-            NavHost(navController = navController, startDestination = ListDestination) {
+            NavHost(navController = navController, startDestination = LoginDestination) {
+                composable<LoginDestination> {
+                    LoginScreen(onLoginClick = {
+                        navController.navigate(ListDestination)
+                    })
+                }
                 composable<ListDestination> {
                     ListScreen(navigateToDetails = { objectId ->
                         navController.navigate(DetailDestination(objectId))
