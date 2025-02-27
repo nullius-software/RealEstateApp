@@ -52,7 +52,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.jetbrains.kmpapp.shared"
+    namespace = "com.realestate.app.shared"
     compileSdk = 35
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

@@ -1,4 +1,4 @@
-package com.jetbrains.kmpapp.screens
+package com.realestate.app.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
@@ -28,7 +28,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.jetbrains.kmpapp.data.MuseumObject
+import com.realestate.app.screens.EmptyScreenContent
+import com.realestate.app.data.MuseumObject
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

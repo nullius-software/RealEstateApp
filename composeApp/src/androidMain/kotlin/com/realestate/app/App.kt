@@ -1,4 +1,4 @@
-package com.jetbrains.kmpapp
+package com.realestate.app
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -10,8 +10,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.jetbrains.kmpapp.screens.DetailScreen
-import com.jetbrains.kmpapp.screens.ListScreen
+import com.realestate.app.screens.ListScreen
+import com.realestate.app.screens.DetailScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
