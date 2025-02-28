@@ -1,6 +1,5 @@
 package com.realestate.app.screens
 
-import android.provider.CalendarContract.Colors
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,9 +23,9 @@ import com.realestate.app.services.ApiClient
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(
-    onLogin: () -> Unit,
-    onClickUserHasNoAccount: () -> Unit,
+fun RegisterScreen(
+    onRegister: () -> Unit,
+    onClickUserAlreadyHasAccount: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -39,14 +38,30 @@ fun LoginScreen(
         val coroutineScope = rememberCoroutineScope()
 
         Text(
-            "Login",
+            "Register",
             style = MaterialTheme.typography.headlineMedium
         )
         Text(
-            "Please enter your email and password to continue.",
+            "Please enter your details to create an account.",
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.height(32.dp))
+        val firstNameState = remember { mutableStateOf("") }
+        TextField(
+            value = firstNameState.value,
+            onValueChange = { firstNameState.value = it },
+            label = { Text("First Name") },
+            singleLine = true,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        val lastNameState = remember { mutableStateOf("") }
+        TextField(
+            value = lastNameState.value,
+            onValueChange = { lastNameState.value = it },
+            label = { Text("Last Name") },
+            singleLine = true,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
         val emailState = remember { mutableStateOf("") }
         TextField(
             value = emailState.value,
@@ -60,25 +75,62 @@ fun LoginScreen(
             value = passwordState.value,
             onValueChange = { passwordState.value = it },
             label = { Text("Password") },
-            singleLine = true
+            singleLine = true,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        val confirmPasswordState = remember { mutableStateOf("") }
+        TextField(
+            value = confirmPasswordState.value,
+            onValueChange = { confirmPasswordState.value = it },
+            label = { Text("Confirm Password") },
+            singleLine = true,
         )
         Spacer(modifier = Modifier.height(32.dp))
         Button(onClick = {
             coroutineScope.launch {
-                val response = ApiClient().login(emailState.value, passwordState.value)
-                if (response.token != null) {
-                    println("Login exitoso: ${response.token}")
-                    onLogin()
+                val email = emailState.value
+                val password = passwordState.value
+                val confirmPassword = confirmPasswordState.value
+
+                if (password != confirmPassword) {
+                    println("Passwords do not match")
+                    return@launch
+                }
+
+                if (password.length < 8) {
+                    println("Password must be at least 8 characters long")
+                    return@launch
+                }
+
+                if (!password.any { it.isDigit() }) {
+                    println("Password must contain at least one digit")
+                    return@launch
+                }
+
+                if (!password.any { it.isUpperCase() }) {
+                    println("Password must contain at least one uppercase letter")
+                    return@launch
+                }
+
+                val response = ApiClient().register(
+                    firstNameState.value,
+                    lastNameState.value,
+                    email,
+                    password
+                )
+                if (response.success) {
+                    println("Registration successful")
+                    onRegister()
                 } else {
-                    println("Error en login: ${response.error}")
+                    println("Registration error: ${response.error}")
                 }
             }
         }) {
-            Text("Login")
+            Text("Register")
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-            onClickUserHasNoAccount()
+            onClickUserAlreadyHasAccount()
         },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent,
@@ -86,10 +138,9 @@ fun LoginScreen(
             )
         ) {
             Text(
-                "Don't have an account? Click here to register.",
+                "Already have an account? Click here to log in",
                 style = MaterialTheme.typography.bodyMedium
             )
         }
     }
 }
-
