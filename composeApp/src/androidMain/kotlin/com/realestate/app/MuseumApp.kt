@@ -2,8 +2,8 @@ package com.realestate.app
 
 import android.app.Application
 import com.realestate.app.di.initKoin
-import com.realestate.app.screens.DetailViewModel
-import com.realestate.app.screens.ListViewModel
+import com.realestate.app.viewModel.DetailViewModel
+import com.realestate.app.viewModel.ListViewModel
 import org.koin.dsl.module
 
 class MuseumApp : Application() {

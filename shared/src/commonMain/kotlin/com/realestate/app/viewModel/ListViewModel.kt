@@ -1,4 +1,4 @@
-package com.realestate.app.screens
+package com.realestate.app.viewModel
 
 import com.realestate.app.data.MuseumObject
 import com.realestate.app.data.MuseumRepository

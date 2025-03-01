@@ -1,4 +1,4 @@
-package com.realestate.app.screens
+package com.realestate.app.ui.screen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.realestate.app.R
-import com.realestate.app.screens.EmptyScreenContent
 import com.realestate.app.data.MuseumObject
+import com.realestate.app.viewModel.DetailViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
