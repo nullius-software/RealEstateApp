@@ -1,10 +1,10 @@
-package com.realestate.app.models
+package com.realestate.app.data.model
 
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class LoginRequest(
-    val username: String,
+    val email: String,
     val password: String
 )
 
@@ -23,7 +23,15 @@ data class RegisterRequest(
 )
 
 @Serializable
+data class RegisterData(
+    val email: String,
+    val firstName: String,
+    val lastName: String,
+)
+
+@Serializable
 data class RegisterResponse(
-    val success: Boolean,
+    val message: String,
+    val data: RegisterData,
     val error: String? = null
 )

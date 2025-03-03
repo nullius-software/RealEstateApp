@@ -6,14 +6,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.realestate.app.screens.DetailScreen
-import com.realestate.app.screens.LoginScreen
-import com.realestate.app.screens.ListScreen
-import com.realestate.app.screens.RegisterScreen
+import com.realestate.app.ui.screen.DetailScreen
+import com.realestate.app.ui.screen.LoginScreen
+import com.realestate.app.ui.screen.ListScreen
+import com.realestate.app.ui.screen.RegisterScreen
+import com.realestate.app.viewModel.LoginViewModel
+import com.realestate.app.viewModel.RegisterViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -35,16 +38,19 @@ fun App() {
     ) {
         Surface {
             val navController = rememberNavController()
+            val loginViewModel: LoginViewModel = viewModel()
+            val registerViewModel: RegisterViewModel = viewModel()
+
             NavHost(navController = navController, startDestination = LoginDestination) {
                 composable<LoginDestination> {
-                    LoginScreen(onLogin = {
+                    LoginScreen(viewModel = loginViewModel, onLogin = {
                         navController.navigate(ListDestination)
                     }, onClickUserHasNoAccount = {
                         navController.navigate(RegisterDestination)
                     })
                 }
                 composable<RegisterDestination> {
-                    RegisterScreen(onRegister = {
+                    RegisterScreen(viewModel = registerViewModel, onRegister = {
                         navController.navigate(ListDestination)
                     }, onClickUserAlreadyHasAccount = {
                         navController.navigate(LoginDestination)

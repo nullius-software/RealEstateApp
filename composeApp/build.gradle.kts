@@ -29,6 +29,7 @@ kotlin {
             implementation(libs.koin.androidx.compose)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
+            implementation("androidx.compose.material:material-icons-extended:1.7.8")
         }
         commonMain.dependencies {
             implementation(compose.runtime)

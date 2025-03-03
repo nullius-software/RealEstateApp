@@ -1,4 +1,4 @@
-package com.realestate.app.screens
+package com.realestate.app.ui.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Text

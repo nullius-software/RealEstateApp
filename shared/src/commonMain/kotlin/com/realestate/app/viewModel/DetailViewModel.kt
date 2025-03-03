@@ -1,4 +1,4 @@
-package com.realestate.app.screens
+package com.realestate.app.viewModel
 
 import com.realestate.app.data.MuseumObject
 import com.realestate.app.data.MuseumRepository
@@ -6,7 +6,6 @@ import com.rickclephas.kmp.observableviewmodel.ViewModel
 import com.rickclephas.kmp.observableviewmodel.stateIn
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
