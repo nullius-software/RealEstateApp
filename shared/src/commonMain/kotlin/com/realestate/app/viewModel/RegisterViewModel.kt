@@ -74,7 +74,9 @@ class RegisterViewModel : ViewModel() {
     val passwordValidation: StateFlow<ValidationResult> = _password.map { Validator.validatePassword(it) }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ValidationResult.Valid)
 
     @NativeCoroutinesState
-    val confirmPasswordValidation: StateFlow<ValidationResult> = _confirmPassword.map { Validator.validatePassword(it) }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ValidationResult.Valid)
+    val confirmPasswordValidation: StateFlow<ValidationResult> = _confirmPassword.map {
+        if (it == _password.value) Validator.validatePassword(it) else ValidationResult.Invalid("Passwords do not match")
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ValidationResult.Valid)
 
     fun setFirstName(firstName: String) {
         _firstName.value = firstName
