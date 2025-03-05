@@ -44,7 +44,7 @@ fun CustomInput(
             visualTransformation = if (isPassword && isVisibleState != null && !isVisibleState.value) PasswordVisualTransformation() else VisualTransformation.None,
             trailingIcon = if (isPassword && isVisibleState != null) {
                 {
-                    val image = if (isVisibleState.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                    val image = if (isVisibleState.value)  Icons.Filled.VisibilityOff else Icons.Filled.Visibility
                     IconButton(onClick = { toggleIsVisible() }) {
                         Icon(imageVector = image, contentDescription = if (isVisibleState.value) "Hide password" else "Show password")
                     }
