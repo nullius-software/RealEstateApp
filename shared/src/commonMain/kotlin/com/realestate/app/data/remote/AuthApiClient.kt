@@ -41,5 +41,7 @@ class AuthApiClient(private val client: HttpClient) {
         }
     }
 
-
+    suspend fun resendVerificationEmail(externalUserId: String): Boolean {
+        return client.post("/api/auth/user/${externalUserId}/resend-verification-email").body()
+    }
 }

@@ -28,4 +28,12 @@ class AuthRepositoryImpl(apiClient: ApiClient) : AuthRepository {
     override suspend fun checkIfUserIsVerified(externalUserId: String): Boolean {
         return authApiClient.checkIfUserIsVerified(externalUserId)
     }
+
+    suspend fun resendVerificationEmail(externalId: String): Boolean {
+        return try {
+            authApiClient.resendVerificationEmail(externalId)
+        } catch (e: Exception) {
+            false
+        }
+    }
 }
