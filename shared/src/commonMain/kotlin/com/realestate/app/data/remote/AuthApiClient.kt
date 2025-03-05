@@ -19,6 +19,10 @@ class AuthApiClient(private val client: HttpClient) {
             }.body()
     }
 
+    suspend fun checkIfUserIsVerified(externalUserId: String): Boolean {
+        return client.get("/api/auth/user/${externalUserId}/is-verified").body()
+    }
+
     suspend fun register(request: RegisterRequest): RegisterResponse {
         return try {
             val response = client.post("/api/auth/register") {

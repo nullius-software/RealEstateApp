@@ -11,12 +11,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.realestate.app.ui.screen.ActivateUserScreen
 import com.realestate.app.ui.screen.DetailScreen
 import com.realestate.app.ui.screen.LoginScreen
 import com.realestate.app.ui.screen.ListScreen
 import com.realestate.app.ui.screen.RegisterScreen
 import com.realestate.app.viewModel.LoginViewModel
 import com.realestate.app.viewModel.RegisterViewModel
+import com.realestate.app.viewModel.UserViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -24,6 +26,9 @@ object LoginDestination
 
 @Serializable
 object RegisterDestination
+
+@Serializable
+object ActivateUserDestination
 
 @Serializable
 object ListDestination
@@ -40,6 +45,7 @@ fun App() {
             val navController = rememberNavController()
             val loginViewModel: LoginViewModel = viewModel()
             val registerViewModel: RegisterViewModel = viewModel()
+            val userViewModel: UserViewModel = viewModel()
 
             NavHost(navController = navController, startDestination = LoginDestination) {
                 composable<LoginDestination> {
@@ -50,10 +56,17 @@ fun App() {
                     })
                 }
                 composable<RegisterDestination> {
-                    RegisterScreen(viewModel = registerViewModel, onRegister = {
-                        navController.navigate(ListDestination)
+                    RegisterScreen(viewModel = registerViewModel, userViewModel = userViewModel, onRegister = {
+                        navController.navigate(ActivateUserDestination)
                     }, onClickUserAlreadyHasAccount = {
                         navController.navigate(LoginDestination)
+                    })
+                }
+                composable<ActivateUserDestination> {
+                    ActivateUserScreen(userViewModel.userData.value, userVerified = {
+                        navController.navigate(ListDestination) {
+                            popUpTo(ActivateUserDestination) { inclusive = true }
+                        }
                     })
                 }
                 composable<ListDestination> {

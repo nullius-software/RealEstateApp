@@ -23,15 +23,18 @@ data class RegisterRequest(
 )
 
 @Serializable
-data class RegisterData(
-    val email: String,
-    val firstName: String,
-    val lastName: String,
+data class RegisterResponse(
+    val message: String,
+    val data: UserData,
+    val error: String? = null
 )
 
 @Serializable
-data class RegisterResponse(
-    val message: String,
-    val data: RegisterData,
-    val error: String? = null
+data class UserData(
+    val id: String,
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val externalId: String
 )
+

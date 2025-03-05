@@ -25,11 +25,13 @@ import com.realestate.app.data.remote.ApiClient
 import com.realestate.app.data.repository.AuthRepositoryImpl
 import com.realestate.app.ui.component.CustomInput
 import com.realestate.app.viewModel.RegisterViewModel
+import com.realestate.app.viewModel.UserViewModel
 import com.realestate.app.viewModel.ValidationResult
 
 @Composable
 fun RegisterScreen(
     viewModel: RegisterViewModel,
+    userViewModel: UserViewModel,
     onRegister: () -> Unit,
     onClickUserAlreadyHasAccount: () -> Unit,
     modifier: Modifier = Modifier,
@@ -180,11 +182,14 @@ fun RegisterScreen(
                         emailState.value,
                         passwordState.value
                     )
+
                     if (response.message.isNotEmpty()) {
-                        println("Registration successful")
+                        userViewModel.setUserData(response.data)
+
+                        Toast.makeText(context, "User successfully created", Toast.LENGTH_LONG).show()
                         onRegister()
                     } else {
-                        println("Registration error: ${response.error}")
+                        throw Exception(response.error)
                     }
                 }  catch (e: Exception) {
                     Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
