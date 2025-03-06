@@ -40,6 +40,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(projects.shared)
             implementation(libs.kotlinx.serialization.core)
+            implementation(libs.multiplatform.settings)
         }
     }
 }

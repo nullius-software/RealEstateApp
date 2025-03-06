@@ -6,6 +6,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -42,15 +43,21 @@ fun App() {
         colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()
     ) {
         Surface {
+            val settings = SettingsProvider(LocalContext.current).createSettings()
             val navController = rememberNavController()
             val loginViewModel: LoginViewModel = viewModel()
             val registerViewModel: RegisterViewModel = viewModel()
-            val userViewModel: UserViewModel = viewModel()
+            val userViewModel = UserViewModel(settings)
 
-            NavHost(navController = navController, startDestination = LoginDestination) {
+            userViewModel.loadCredentials()
+
+            NavHost(navController = navController, startDestination = if (userViewModel.credentials.value == null) LoginDestination else ListDestination
+            ) {
                 composable<LoginDestination> {
-                    LoginScreen(viewModel = loginViewModel, onLogin = {
-                        navController.navigate(ListDestination)
+                    LoginScreen(viewModel = loginViewModel, userViewModel= userViewModel, onLogin = {
+                        navController.navigate(ListDestination) {
+                            popUpTo(LoginDestination) { inclusive = true }
+                        }
                     }, onClickUserHasNoAccount = {
                         navController.navigate(RegisterDestination)
                     })
