@@ -59,18 +59,24 @@ fun App() {
                             popUpTo(LoginDestination) { inclusive = true }
                         }
                     }, onClickUserHasNoAccount = {
-                        navController.navigate(RegisterDestination)
+                        navController.navigate(RegisterDestination) {
+                            popUpTo(LoginDestination) { inclusive = true }
+                        }
                     })
                 }
                 composable<RegisterDestination> {
                     RegisterScreen(viewModel = registerViewModel, userViewModel = userViewModel, onRegister = {
-                        navController.navigate(ActivateUserDestination)
+                        navController.navigate(ActivateUserDestination) {
+                            popUpTo(RegisterDestination) { inclusive = true }
+                        }
                     }, onClickUserAlreadyHasAccount = {
-                        navController.navigate(LoginDestination)
+                        navController.navigate(LoginDestination) {
+                            popUpTo(RegisterDestination) { inclusive = true }
+                        }
                     })
                 }
                 composable<ActivateUserDestination> {
-                    ActivateUserScreen(userViewModel.userData.value, userVerified = {
+                    ActivateUserScreen(userViewModel = userViewModel, userVerified = {
                         navController.navigate(ListDestination) {
                             popUpTo(ActivateUserDestination) { inclusive = true }
                         }

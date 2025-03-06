@@ -110,7 +110,7 @@ fun LoginScreen(
                     userViewModel.login(emailState.value, passwordState.value)
                     Toast.makeText(context, "Login Successful", Toast.LENGTH_LONG).show()
                     onLogin()
-                }  catch (e: Exception) {
+                } catch (e: Exception) {
                     Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
                 }
             }

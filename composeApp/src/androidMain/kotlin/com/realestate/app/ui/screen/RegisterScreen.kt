@@ -20,8 +20,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
-import com.realestate.app.data.remote.ApiClient
-import com.realestate.app.data.repository.AuthRepositoryImpl
 import com.realestate.app.ui.component.CustomInput
 import com.realestate.app.viewModel.RegisterViewModel
 import com.realestate.app.viewModel.UserViewModel
@@ -35,7 +33,6 @@ fun RegisterScreen(
     onClickUserAlreadyHasAccount: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val authRepository = AuthRepositoryImpl(ApiClient())
     val context = LocalContext.current
 
     val firstNameState = viewModel.firstName.collectAsState()
@@ -175,21 +172,15 @@ fun RegisterScreen(
         Button(onClick = {
             coroutineScope.launch {
                 try {
-                    val response = authRepository.register(
+                    userViewModel.register(
                         firstNameState.value,
                         lastNameState.value,
                         emailState.value,
                         passwordState.value
                     )
 
-                    if (response.message.isNotEmpty()) {
-                        userViewModel.setUserData(response.data)
-
-                        Toast.makeText(context, "User successfully created", Toast.LENGTH_LONG).show()
-                        onRegister()
-                    } else {
-                        throw Exception(response.error)
-                    }
+                    Toast.makeText(context, "User successfully created", Toast.LENGTH_LONG).show()
+                    onRegister()
                 }  catch (e: Exception) {
                     Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
                 }
