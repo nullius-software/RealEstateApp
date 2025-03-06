@@ -6,20 +6,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextAlign
-import com.realestate.app.data.model.UserData
 import com.realestate.app.data.remote.ApiClient
 import com.realestate.app.data.repository.AuthRepositoryImpl
+import com.realestate.app.viewModel.UserViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun ActivateUserScreen(user: UserData?, userVerified: () -> Unit) {
+fun ActivateUserScreen(userViewModel: UserViewModel, userVerified: () -> Unit) {
     val authRepository = AuthRepositoryImpl(ApiClient())
-    val isVerified by remember { mutableStateOf(false) }
+    val user = userViewModel.userData.value
     var emailResent by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
-    if(user == null) {
+    if (user == null) {
         return Text(
             "Unexpected error. User not found.",
             style = MaterialTheme.typography.headlineMedium,
@@ -28,8 +28,8 @@ fun ActivateUserScreen(user: UserData?, userVerified: () -> Unit) {
     }
 
     LaunchedEffect(Unit) {
-        while (!isVerified) {
-            val verified = authRepository.checkIfUserIsVerified(user.externalId)
+        while (!userViewModel.userEmailIsVerified.value) {
+            val verified = userViewModel.checkIfUserIsVerified()
             if (verified) {
                 userVerified()
             }

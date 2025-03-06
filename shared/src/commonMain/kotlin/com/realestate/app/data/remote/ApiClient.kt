@@ -14,7 +14,7 @@ class ApiClient {
             })
         }
         defaultRequest {
-            url("http://10.0.2.2:8090")
+            url("http://192.168.1.100:8090")
         }
     }
 }

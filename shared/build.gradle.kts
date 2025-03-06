@@ -31,9 +31,11 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.multiplatform.settings)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.multiplatform.settings)
         }
         commonMain.dependencies {
             implementation(libs.ktor.client.core)
@@ -41,6 +43,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.koin.core)
             api(libs.kmp.observable.viewmodel)
+            implementation(libs.multiplatform.settings)
         }
 
         // Required by KMM-ViewModel

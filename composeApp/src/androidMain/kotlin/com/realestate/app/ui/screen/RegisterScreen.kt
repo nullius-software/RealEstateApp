@@ -7,22 +7,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
-import com.realestate.app.data.remote.ApiClient
-import com.realestate.app.data.repository.AuthRepositoryImpl
 import com.realestate.app.ui.component.CustomInput
 import com.realestate.app.viewModel.RegisterViewModel
 import com.realestate.app.viewModel.UserViewModel
@@ -36,7 +35,6 @@ fun RegisterScreen(
     onClickUserAlreadyHasAccount: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val authRepository = AuthRepositoryImpl(ApiClient())
     val context = LocalContext.current
 
     val firstNameState = viewModel.firstName.collectAsState()
@@ -58,6 +56,8 @@ fun RegisterScreen(
     val emailBlurred = viewModel.emailBlurred.collectAsState()
     val passwordBlurred = viewModel.passwordBlurred.collectAsState()
     val confirmPasswordBlurred = viewModel.confirmPasswordBlurred.collectAsState()
+
+    val isLoading = userViewModel.loading.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -176,21 +176,15 @@ fun RegisterScreen(
         Button(onClick = {
             coroutineScope.launch {
                 try {
-                    val response = authRepository.register(
+                    userViewModel.register(
                         firstNameState.value,
                         lastNameState.value,
                         emailState.value,
                         passwordState.value
                     )
 
-                    if (response.message.isNotEmpty()) {
-                        userViewModel.setUserData(response.data)
-
-                        Toast.makeText(context, "User successfully created", Toast.LENGTH_LONG).show()
-                        onRegister()
-                    } else {
-                        throw Exception(response.error)
-                    }
+                    Toast.makeText(context, "User successfully created", Toast.LENGTH_LONG).show()
+                    onRegister()
                 }  catch (e: Exception) {
                     Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
                 }
@@ -200,18 +194,18 @@ fun RegisterScreen(
                     && lastNameValidation.value == ValidationResult.Valid
                     && emailValidation.value == ValidationResult.Valid
                     && passwordValidation.value == ValidationResult.Valid
-                    && confirmPasswordValidation.value == ValidationResult.Valid)
+                    && confirmPasswordValidation.value == ValidationResult.Valid
+                    && !isLoading.value)
         ) {
-            Text("Register")
+            if (isLoading.value) {
+                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(20.dp))
+            } else {
+                Text("Register")
+            }
         }
-        Button(onClick = {
+        TextButton(onClick = {
             onClickUserAlreadyHasAccount()
-        },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-                contentColor = Color.Black
-            )
-        ) {
+        }) {
             Text(
                 "Already have an account? Click here to log in",
                 style = MaterialTheme.typography.bodyMedium

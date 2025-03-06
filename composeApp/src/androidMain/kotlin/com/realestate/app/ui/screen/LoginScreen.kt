@@ -1,40 +1,43 @@
 package com.realestate.app.ui.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
-import com.realestate.app.data.remote.ApiClient
-import com.realestate.app.data.repository.AuthRepositoryImpl
 import com.realestate.app.ui.component.CustomInput
 import com.realestate.app.viewModel.LoginViewModel
+import com.realestate.app.viewModel.UserViewModel
 import com.realestate.app.viewModel.ValidationResult
 
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel,
+    userViewModel: UserViewModel,
     onLogin: () -> Unit,
     onClickUserHasNoAccount: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val authRepository = AuthRepositoryImpl(ApiClient())
+
+    val context = LocalContext.current
+
     val emailState = viewModel.email.collectAsState()
     val passwordState = viewModel.password.collectAsState()
     val passwordVisibleState = viewModel.passwordVisible.collectAsState()
@@ -42,6 +45,9 @@ fun LoginScreen(
     val passwordValidation = viewModel.passwordValidation.collectAsState()
     val emailBlurred = viewModel.emailBlurred.collectAsState()
     val passwordBlurred = viewModel.passwordBlurred.collectAsState()
+
+    val isLoading = userViewModel.loading.collectAsState()
+
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -105,28 +111,27 @@ fun LoginScreen(
 
         Button(onClick = {
             coroutineScope.launch {
-                val response = authRepository.login(emailState.value, passwordState.value)
-                if (response.token != null) {
-                    println("Login successful: ${response.token}")
+                try {
+                    userViewModel.login(emailState.value, passwordState.value)
+                    Toast.makeText(context, "Login Successful", Toast.LENGTH_LONG).show()
                     onLogin()
-                } else {
-                    println("Login error: ${response.error}")
+                } catch (e: Exception) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
                 }
             }
         },
-            enabled = emailValidation.value == ValidationResult.Valid && passwordValidation.value == ValidationResult.Valid
+            enabled = emailValidation.value == ValidationResult.Valid && passwordValidation.value == ValidationResult.Valid && !isLoading.value
         ) {
-            Text("Login")
+            if (isLoading.value) {
+                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(20.dp))
+            } else {
+                Text("Login")
+            }
         }
 
-        Button(onClick = {
+        TextButton(onClick = {
             onClickUserHasNoAccount()
-        },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-                contentColor = Color.Black
-            )
-        ) {
+        }) {
             Text(
                 "Don't have an account? Click here to register.",
                 style = MaterialTheme.typography.bodyMedium

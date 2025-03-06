@@ -6,6 +6,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -42,28 +43,40 @@ fun App() {
         colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()
     ) {
         Surface {
+            val settings = SettingsProvider(LocalContext.current).createSettings()
             val navController = rememberNavController()
             val loginViewModel: LoginViewModel = viewModel()
             val registerViewModel: RegisterViewModel = viewModel()
-            val userViewModel: UserViewModel = viewModel()
+            val userViewModel = UserViewModel(settings)
 
-            NavHost(navController = navController, startDestination = LoginDestination) {
+            userViewModel.loadCredentials()
+
+            NavHost(navController = navController, startDestination = if (userViewModel.credentials.value == null) LoginDestination else ListDestination
+            ) {
                 composable<LoginDestination> {
-                    LoginScreen(viewModel = loginViewModel, onLogin = {
-                        navController.navigate(ListDestination)
+                    LoginScreen(viewModel = loginViewModel, userViewModel= userViewModel, onLogin = {
+                        navController.navigate(ListDestination) {
+                            popUpTo(LoginDestination) { inclusive = true }
+                        }
                     }, onClickUserHasNoAccount = {
-                        navController.navigate(RegisterDestination)
+                        navController.navigate(RegisterDestination) {
+                            popUpTo(LoginDestination) { inclusive = true }
+                        }
                     })
                 }
                 composable<RegisterDestination> {
                     RegisterScreen(viewModel = registerViewModel, userViewModel = userViewModel, onRegister = {
-                        navController.navigate(ActivateUserDestination)
+                        navController.navigate(ActivateUserDestination) {
+                            popUpTo(RegisterDestination) { inclusive = true }
+                        }
                     }, onClickUserAlreadyHasAccount = {
-                        navController.navigate(LoginDestination)
+                        navController.navigate(LoginDestination) {
+                            popUpTo(RegisterDestination) { inclusive = true }
+                        }
                     })
                 }
                 composable<ActivateUserDestination> {
-                    ActivateUserScreen(userViewModel.userData.value, userVerified = {
+                    ActivateUserScreen(userViewModel = userViewModel, userVerified = {
                         navController.navigate(ListDestination) {
                             popUpTo(ActivateUserDestination) { inclusive = true }
                         }
