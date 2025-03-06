@@ -43,6 +43,9 @@ fun LoginScreen(
     val passwordValidation = viewModel.passwordValidation.collectAsState()
     val emailBlurred = viewModel.emailBlurred.collectAsState()
     val passwordBlurred = viewModel.passwordBlurred.collectAsState()
+
+    val isLoading = userViewModel.loading.collectAsState()
+
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -115,9 +118,9 @@ fun LoginScreen(
                 }
             }
         },
-            enabled = emailValidation.value == ValidationResult.Valid && passwordValidation.value == ValidationResult.Valid
+            enabled = emailValidation.value == ValidationResult.Valid && passwordValidation.value == ValidationResult.Valid && !isLoading.value
         ) {
-            Text("Login")
+            Text(if (isLoading.value) "Loading..." else "Login")
         }
 
         TextButton(onClick = {

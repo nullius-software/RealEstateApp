@@ -10,12 +10,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 import com.russhwolf.settings.Settings
+import kotlinx.coroutines.delay
 
 class UserViewModel(private val settings: Settings) : ViewModel() {
     private val authRepository = AuthRepositoryImpl(ApiClient())
     private val _userData = MutableStateFlow<UserData?>(null)
     private val _credentials = MutableStateFlow<LoginResponse?>(null)
     private val _userEmailIsVerified = MutableStateFlow(false)
+    private val _loading = MutableStateFlow(false)
 
     @NativeCoroutineScope
     val userData: StateFlow<UserData?> = _userData
@@ -25,6 +27,9 @@ class UserViewModel(private val settings: Settings) : ViewModel() {
 
     @NativeCoroutineScope
     val userEmailIsVerified: StateFlow<Boolean> = _userEmailIsVerified
+
+    @NativeCoroutineScope
+    val loading: StateFlow<Boolean> = _loading
 
     private fun setUserData(data: UserData) {
         _userData.value = data
@@ -49,20 +54,44 @@ class UserViewModel(private val settings: Settings) : ViewModel() {
     }
 
     suspend fun login(email: String, password: String) {
-        val response = authRepository.login(email, password)
-        setCredentials(response)
+        try {
+            _loading.value = true
+            val response = authRepository.login(email, password)
+            setCredentials(response)
+            delay(5000)
+            _loading.value = false
+        } catch (e: Exception) {
+            _loading.value = false
+            throw e
+        }
     }
 
     suspend fun register(firstName: String, lastName: String, email: String, password: String) {
-        val response = authRepository.register(firstName, lastName, email, password)
-        setUserData(response.data)
-        login(email, password)
+        try {
+            _loading.value = true
+            val response = authRepository.register(firstName, lastName, email, password)
+            setUserData(response.data)
+            login(email, password)
+            _loading.value = false
+        } catch (e: Exception) {
+            _loading.value = false
+            throw e
+        }
     }
 
     suspend fun checkIfUserIsVerified(): Boolean {
-        val user = userData.value ?: throw Exception("User not found.")
+        _loading.value = true
+        val user = userData.value
+
+        if (user == null) {
+            _loading.value = false
+            throw Exception("User not found.")
+        }
+
         val verified = authRepository.checkIfUserIsVerified(user.externalId)
         setUserEmailIsVerified(verified)
+
+        _loading.value = false
         return verified
     }
 }
