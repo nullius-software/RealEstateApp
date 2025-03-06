@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -54,6 +56,8 @@ fun RegisterScreen(
     val emailBlurred = viewModel.emailBlurred.collectAsState()
     val passwordBlurred = viewModel.passwordBlurred.collectAsState()
     val confirmPasswordBlurred = viewModel.confirmPasswordBlurred.collectAsState()
+
+    val isLoading = userViewModel.loading.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -190,9 +194,14 @@ fun RegisterScreen(
                     && lastNameValidation.value == ValidationResult.Valid
                     && emailValidation.value == ValidationResult.Valid
                     && passwordValidation.value == ValidationResult.Valid
-                    && confirmPasswordValidation.value == ValidationResult.Valid)
+                    && confirmPasswordValidation.value == ValidationResult.Valid
+                    && !isLoading.value)
         ) {
-            Text("Register")
+            if (isLoading.value) {
+                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(20.dp))
+            } else {
+                Text("Register")
+            }
         }
         TextButton(onClick = {
             onClickUserAlreadyHasAccount()
